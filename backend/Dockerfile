@@ -14,5 +14,5 @@ ENV PATH="${PATH}:/root/.local/bin"
 WORKDIR /app/
 COPY pyproject.toml poetry.lock ./
 RUN poetry install --no-interaction --no-ansi
-COPY / .
+COPY . .
 RUN chmod +x entrypoint.sh
