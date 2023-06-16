@@ -9,10 +9,11 @@ services:
     ports:
       - 8080:8080
     environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
-      - PROJECT_DB=${PROJECT_DB}
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
+      - POSTGRES_PORT
+      - PROJECT_DB
       - PROJECT_HOST=0.0.0.0
     depends_on:
       - db
@@ -26,9 +27,10 @@ services:
     volumes:
        - postgresdata:/var/lib/postgresql/data
     environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_PORT
+      - POSTGRES_DB
 
 volumes:
   postgresdata:
