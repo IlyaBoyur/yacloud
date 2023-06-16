@@ -7,7 +7,7 @@ services:
     entrypoint: ./entrypoint.sh
     command: python3 main.py
     ports:
-      - 8080:8080
+      - 8080:${PROJECT_PORT}
     environment:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
@@ -23,7 +23,7 @@ services:
     build:
       context: ./db
     ports:
-      - 5432:5432
+      - 55432:${POSTGRES_PORT}
     volumes:
        - postgresdata:/var/lib/postgresql/data
     environment:
