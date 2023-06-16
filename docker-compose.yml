@@ -2,6 +2,8 @@ version: '3.8'
 services:
   backend:
     restart: unless-stopped
+    volumes:
+      - ./backend/:/app/
     build:
       context: ./backend
     entrypoint: ./entrypoint.sh
