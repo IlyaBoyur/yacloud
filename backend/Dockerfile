@@ -11,9 +11,8 @@ RUN apt-get install -y --no-install-recommends \
 RUN pip install --user poetry==1.3.2
 RUN pip install certifi==2021.10.8
 ENV PATH="${PATH}:/root/.local/bin"
-RUN mkdir /app
-COPY pyproject.toml poetry.lock /app/
 WORKDIR /app/
+COPY pyproject.toml poetry.lock ./
 RUN poetry install --no-interaction --no-ansi
-COPY / /app/
+COPY / .
 RUN chmod +x entrypoint.sh
