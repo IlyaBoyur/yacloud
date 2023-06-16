@@ -8,6 +8,7 @@ logging_config.dictConfig(LOGGING)
 
 
 class AppSettings(BaseSettings):
+    project_name: str = ""
     project_host: str | HttpUrl = "localhost"
     project_port: int = 8080
     project_db: PostgresDsn = "postgresql+asyncpg://postgres:postgres@localhost:5432/postgres"

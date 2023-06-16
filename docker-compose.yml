@@ -13,8 +13,10 @@ services:
       - POSTGRES_PASSWORD
       - POSTGRES_DB
       - POSTGRES_PORT
-      - PROJECT_DB
+      - PROJECT_NAME
       - PROJECT_HOST=0.0.0.0
+      - PROJECT_PORT
+      - PROJECT_DB
     depends_on:
       - db
 
