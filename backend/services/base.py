@@ -33,7 +33,9 @@ CreateSchemaType = TypeVar("CreateSchemaType", bound=BaseModel)
 UpdateSchemaType = TypeVar("UpdateSchemaType", bound=BaseModel)
 
 
-class RepositoryDB(Repository, Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
+class RepositoryDB(
+    Repository, Generic[ModelType, CreateSchemaType, UpdateSchemaType]
+):
     def __init__(self, model: Type[ModelType]):
         self._model = model
 
@@ -51,7 +53,9 @@ class RepositoryDB(Repository, Generic[ModelType, CreateSchemaType, UpdateSchema
         limit: int = 100,
     ) -> list[ModelType]:
         filter = filter or {}
-        statement = select(self._model).filter_by(**filter).offset(skip).limit(limit)
+        statement = (
+            select(self._model).filter_by(**filter).offset(skip).limit(limit)
+        )
         results = await db.execute(statement=statement)
         return results.scalars().all()
 
@@ -75,7 +79,8 @@ class RepositoryDB(Repository, Generic[ModelType, CreateSchemaType, UpdateSchema
         """
         statement = insert(self._model).returning(self._model)
         results = await db.scalars(
-            statement=statement, params=[{**dict(object_in)} for object_in in objects_in]
+            statement=statement,
+            params=[{**dict(object_in)} for object_in in objects_in],
         )
         await db.commit()
         return results.all()
@@ -89,7 +94,11 @@ class RepositoryDB(Repository, Generic[ModelType, CreateSchemaType, UpdateSchema
     ) -> ModelType:
         obj_in_data = dict(object_in)
         obj_in_data.pop("id", None)
-        statement = update(self._model).filter_by(id=db_object.id).values(**obj_in_data)
+        statement = (
+            update(self._model)
+            .filter_by(id=db_object.id)
+            .values(**obj_in_data)
+        )
         await db.execute(statement=statement)
         await db.commit()
         await db.refresh(db_object)
@@ -101,9 +110,15 @@ class RepositoryDB(Repository, Generic[ModelType, CreateSchemaType, UpdateSchema
         await db.execute(statement=statement)
         await db.commit()
 
-    async def count(self, db: AsyncSession, *, filter: dict[str, Any] = None) -> int:
+    async def count(
+        self, db: AsyncSession, *, filter: dict[str, Any] = None
+    ) -> int:
         filter = filter or {}
-        statement = select(self._model).filter_by(**filter).with_only_columns(*[functions.count()])
+        statement = (
+            select(self._model)
+            .filter_by(**filter)
+            .with_only_columns(*[functions.count()])
+        )
         result = await db.execute(statement=statement)
         return result.scalar()
 
