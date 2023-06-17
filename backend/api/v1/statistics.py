@@ -3,7 +3,7 @@ import logging
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from db.db import get_session
+from db import get_session
 from schemas.status import Status
 
 router = APIRouter()

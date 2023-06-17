@@ -5,7 +5,7 @@ from sqlalchemy import Boolean, DateTime, ForeignKey, Integer, String, Uuid
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.sql.expression import func
 
-from db.db import Base
+from db import Base
 
 
 class UserFile(Base):
