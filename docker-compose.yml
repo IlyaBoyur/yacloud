@@ -19,6 +19,8 @@ services:
       - PROJECT_HOST=0.0.0.0
       - PROJECT_PORT
       - PROJECT_DB
+      - JWT_SECRET_KEY
+      - JWT_LIFETIME_SECS
     depends_on:
       - db
 
