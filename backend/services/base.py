@@ -6,7 +6,7 @@ from sqlalchemy import delete, insert, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import functions
 
-from db.db import Base
+from db import Base
 
 logger = logging.getLogger(__name__)
 
