@@ -1,0 +1,94 @@
+name: file storage workflow
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - master
+      - feature/add-ci-cd
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  build:
+    name: Build & push docker images to DockerHub
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Login to DockerHub
+        run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build docker images
+        run: docker compose build
+      - name: Push docker images
+        run: docker compose push
+
+  test:
+    name: Run tests
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Login to DockerHub
+        run: docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASSWORD }}
+      - name: Pull docker images
+        run: docker compose pull
+      - name: Test with black
+        run: docker compose run --no-deps --rm backend /bin/sh -c "black --config pyproject.toml --check ."
+      - name: Test with isort
+        run: docker compose run --no-deps --rm backend /bin/sh -c "isort --sp pyproject.toml --check-only ."
+      - name: Test with mypy
+        run: docker compose run --no-deps --rm backend /bin/sh -c "mypy --config-file setup.cfg ."
+      - name: Test with flake8
+        run: docker compose run --no-deps --rm backend /bin/sh -c "flake8 --statistics --config setup.cfg ."
+      - name: Run tests
+        run: docker compose run --rm backend /bin/sh -c "pytest -p no:warnings --cov-report term:skip-covered --cov=."
+
+  deploy:
+    name: Deploy to Running Server
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Execute remote ssh commands to deploy
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.WORK_SERVER_HOST }}
+          username: ${{ secrets.WORK_SERVER_USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.WORK_SERVER_PASSPHRASE }}
+          script: |
+            # Add envs
+            echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env
+            echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
+            echo POSTGRES_DB=${{ secrets.POSTGRES_DB }} >> .env
+            echo POSTGRES_PORT=${{ secrets.POSTGRES_PORT }} >> .env
+            echo PROJECT_NAME=${{ secrets.PROJECT_NAME }} >> .env
+            echo PROJECT_HOST=${{ secrets.PROJECT_HOST }} >> .env
+            echo PROJECT_PORT=${{ secrets.PROJECT_PORT }} >> .env
+            echo PROJECT_DB=${{ secrets.PROJECT_DB }} >> .env
+            echo JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} >> .env
+            echo JWT_LIFETIME_SECS=${{ secrets.JWT_LIFETIME_SECS }} >> .env
+            echo MEDIA_ROOT=${{ secrets.MEDIA_ROOT }} >> .env
+            echo STORAGE_HASH_FILENAME=${{ secrets.STORAGE_HASH_FILENAME }} >> .env
+            # Rerun docker compose
+            TAG=${CI_COMMIT_REF_SLUG} docker compose pull
+            docker stop $(docker ps -aq)
+            TAG=${CI_COMMIT_REF_SLUG} docker compose up --remove-orphans -d
+
+  send_message:
+    name: Inform success
+    runs-on: ubuntu-latest
+    needs: deploy
+    steps:
+      - name: Send to Telegram
+        uses: appleboy/telegram-action@v0.1.1
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            ${{ github.workflow }} успешно выполнен!
+            Репозиторий: ${{ github.repository }}
+            Последний коммит: https://github.com/${{ github.repository }}/commit/${{ github.sha }}
