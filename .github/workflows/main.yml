@@ -23,8 +23,21 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_TOKEN }}
-      - name: Set envs
-        run: echo ${{ secrets }} >> .env
+      - name: Make .env file
+        uses: SpicyPizza/create-envfile@v2.0
+        with:
+          envkey_POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          envkey_POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          envkey_POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          envkey_POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
+          envkey_PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
+          envkey_PROJECT_HOST: ${{ secrets.PROJECT_HOST }}
+          envkey_PROJECT_PORT: ${{ secrets.PROJECT_PORT }}
+          envkey_PROJECT_DB: ${{ secrets.PROJECT_DB }}
+          envkey_JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+          envkey_JWT_LIFETIME_SECS: ${{ secrets.JWT_LIFETIME_SECS }}
+          envkey_MEDIA_ROOT: ${{ secrets.MEDIA_ROOT }}
+          envkey_STORAGE_HASH_FILENAME: ${{ secrets.STORAGE_HASH_FILENAME }}
       - name: Build docker images
         run: docker compose build
       - name: Push docker images
