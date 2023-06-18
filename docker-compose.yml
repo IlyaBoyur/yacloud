@@ -21,6 +21,8 @@ services:
       - PROJECT_DB
       - JWT_SECRET_KEY
       - JWT_LIFETIME_SECS
+      - MEDIA_ROOT
+      - STORAGE_HASH_FILENAME
     depends_on:
       - db
 
