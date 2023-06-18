@@ -1951,4 +1951,4 @@ test = ["Cython (>=0.29.32,<0.30.0)", "aiohttp", "flake8 (>=3.9.2,<3.10.0)", "my
 [metadata]
 lock-version = "2.0"
 python-versions = "3.11"
-content-hash = "8b0bcd8324a944f1b91da5b719701e3de804aefa68a650afb3e788b2b9e8a3c1"
+content-hash = "6f6ed7ea46206f7e54a125848180a2a3a036e608357ee628aef558043e25cc5a"
