@@ -3,6 +3,7 @@ from typing import Any, Generic, Type, TypeVar
 
 from pydantic import BaseModel
 from sqlalchemy import delete, insert, select, update
+from sqlalchemy.exc import DBAPIError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql import functions
 
@@ -41,14 +42,17 @@ class RepositoryDB(
 
     async def get(self, db: AsyncSession, id: Any) -> ModelType | None:
         statement = select(self._model).where(self._model.id == id)
-        results = await db.execute(statement=statement)
+        try:
+            results = await db.execute(statement=statement)
+        except DBAPIError:
+            return
         return results.scalar_one_or_none()
 
     async def get_multi(
         self,
         db: AsyncSession,
         *,
-        filter: dict[str, Any] = None,
+        filter: dict[str, Any] | None = None,
         skip: int = 0,
         limit: int = 100,
     ) -> list[ModelType]:
@@ -104,14 +108,15 @@ class RepositoryDB(
         await db.refresh(db_object)
         return db_object
 
-    async def delete(self, db: AsyncSession, *, id: int | None = None) -> None:
-        filter = {"id": id} if id else {}
+    async def delete(
+        self, db: AsyncSession, *, filter: dict[str, Any] | None = None
+    ) -> None:
         statement = delete(self._model).filter_by(**filter)
         await db.execute(statement=statement)
         await db.commit()
 
     async def count(
-        self, db: AsyncSession, *, filter: dict[str, Any] = None
+        self, db: AsyncSession, *, filter: dict[str, Any] | None = None
     ) -> int:
         filter = filter or {}
         statement = (
