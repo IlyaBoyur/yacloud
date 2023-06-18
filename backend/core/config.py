@@ -16,6 +16,8 @@ class AppSettings(BaseSettings):
     )
     jwt_secret_key: str
     jwt_lifetime_secs: int = 3600
+    media_root: str = "media"
+    storage_hash_filename: bool = False
 
     class Config:
         env_file = ".env"
