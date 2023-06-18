@@ -12,17 +12,12 @@ on:
       - master
 
 jobs:
-  build:
-    name: Build & push docker images to DockerHub
+  build_test_push:
+    name: Build, test & push docker images to DockerHub
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Login to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USER }}
-          password: ${{ secrets.DOCKER_TOKEN }}
       - name: Make .env file
         uses: SpicyPizza/create-envfile@v2.0
         with:
@@ -38,25 +33,13 @@ jobs:
           envkey_JWT_LIFETIME_SECS: ${{ secrets.JWT_LIFETIME_SECS }}
           envkey_MEDIA_ROOT: ${{ secrets.MEDIA_ROOT }}
           envkey_STORAGE_HASH_FILENAME: ${{ secrets.STORAGE_HASH_FILENAME }}
-      - name: Build docker images
-        run: docker compose build
-      - name: Push docker images
-        run: docker compose push
-
-  test:
-    name: Run tests
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_TOKEN }}
-      - name: Pull docker images
-        run: docker compose pull
+      - name: Build docker images
+        run: docker compose build
       - name: Test with black
         run: docker compose run --no-deps --rm backend /bin/sh -c "black --config pyproject.toml --check ."
       - name: Test with isort
@@ -67,11 +50,13 @@ jobs:
         run: docker compose run --no-deps --rm backend /bin/sh -c "flake8 --statistics --config setup.cfg ."
       - name: Run tests
         run: docker compose run --rm backend /bin/sh -c "pytest -p no:warnings --cov-report term:skip-covered --cov=."
+      - name: Push docker images
+        run: docker compose push
 
   deploy:
     name: Deploy to Running Server
     runs-on: ubuntu-latest
-    needs: test
+    needs: build_test_push
     steps:
       - name: Execute remote ssh commands to deploy
         uses: appleboy/ssh-action@v0.1.10
