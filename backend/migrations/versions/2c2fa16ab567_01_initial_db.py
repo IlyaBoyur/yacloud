@@ -1,18 +1,16 @@
 """01_initial-db
 
-Revision ID: 9ef4f80c89fb
+Revision ID: 2c2fa16ab567
 Revises: 
-Create Date: 2023-06-17 10:04:46.426174
+Create Date: 2023-06-18 10:40:35.043843
 
 """
 import fastapi_users_db_sqlalchemy
 import sqlalchemy as sa
 from alembic import op
 
-import db
-
 # revision identifiers, used by Alembic.
-revision = "9ef4f80c89fb"
+revision = "2c2fa16ab567"
 down_revision = None
 branch_labels = None
 depends_on = None

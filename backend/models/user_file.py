@@ -12,12 +12,12 @@ class UserFile(Base):
     id: Mapped[uuid.UUID] = mapped_column(
         Uuid, primary_key=True, default=uuid.uuid4
     )
-    user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))
-    name: Mapped[uuid.UUID] = mapped_column(String(255), nullable=False)
+    user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("user.id"))
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
     created_at: Mapped[datetime] = mapped_column(
         DateTime, index=True, default=func.now(), nullable=False
     )
-    path: Mapped[str] = mapped_column(String(1024), default=0, nullable=False)
+    path: Mapped[str] = mapped_column(String(1024), default="", nullable=False)
     size: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     is_downloadable: Mapped[bool] = mapped_column(
         Boolean, default=True, nullable=False
