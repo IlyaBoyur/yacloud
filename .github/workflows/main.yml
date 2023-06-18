@@ -30,10 +30,10 @@ jobs:
           envkey_POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           envkey_POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
           envkey_POSTGRES_PORT: ${{ secrets.POSTGRES_PORT }}
-          envkey_PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
-          envkey_PROJECT_HOST: ${{ secrets.PROJECT_HOST }}
-          envkey_PROJECT_PORT: ${{ secrets.PROJECT_PORT }}
-          envkey_PROJECT_DB: ${{ secrets.PROJECT_DB }}
+          envkey_PROJECT_NAME: ${{ env.PROJECT_NAME }}
+          envkey_PROJECT_HOST: ${{ env.PROJECT_HOST }}
+          envkey_PROJECT_PORT: ${{ env.PROJECT_PORT }}
+          envkey_PROJECT_DB: ${{ env.PROJECT_DB }}
           envkey_JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
           envkey_JWT_LIFETIME_SECS: ${{ secrets.JWT_LIFETIME_SECS }}
           envkey_MEDIA_ROOT: ${{ secrets.MEDIA_ROOT }}
