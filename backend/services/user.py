@@ -63,7 +63,7 @@ async def get_user_manager(user_db=Depends(get_user_service)):
     yield UserManager(user_db)
 
 
-bearer_transport = BearerTransport(tokenUrl="/api/v1/login")
+bearer_transport = BearerTransport(tokenUrl="login")
 
 
 def get_jwt_strategy() -> JWTStrategy:
@@ -84,3 +84,6 @@ fastapi_users = FastAPIUsers[User, uuid.UUID](
     get_user_manager=get_user_manager,
     auth_backends=[jwt_backend],
 )
+
+
+current_user = fastapi_users.current_user(active=True)
