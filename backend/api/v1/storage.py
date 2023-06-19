@@ -25,7 +25,7 @@ async def files(
     limit: int = 100,
     user: User = Depends(current_user),
 ) -> UserFileList:
-    """Retrieve list of file infos"""
+    """Retrieve list of file infos."""
 
     response = await user_file_service.get_multi(
         db, filter=dict(user_id=user.id), skip=skip, limit=limit
@@ -43,7 +43,7 @@ async def upload(
     file: UploadFile,
     path: str = Body(),
 ) -> UserFileRead:
-    """Upload file to user`s storage"""
+    """Upload file to user`s storage."""
 
     result = await storage_service.upload(path=path, file=file)
     if result.status != FileLoadStatus.FINISHED:
@@ -73,7 +73,8 @@ async def download(
     user: User = Depends(current_user),
     path: str = "",
 ) -> Any:
-    """Download file"""
+    """Download file."""
+
     if (
         record := await user_file_service.get(db, id=path)
     ) is not None and record.user_id == user.id:
