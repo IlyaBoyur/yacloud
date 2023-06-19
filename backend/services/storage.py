@@ -10,6 +10,7 @@ from core.config import app_settings
 
 logger = logging.getLogger(__name__)
 
+ERROR_SAVING = "Error while saving {filename}"
 ERROR_NO_FILE = "File {name} download error: does not exist"
 
 
@@ -74,8 +75,8 @@ class LocalFileStorage(FileStorage):
         try:
             with open(result_path, "wb") as f:
                 shutil.copyfileobj(file.file, f)
-        except Exception as error:
-            logger.exception(error)
+        except shutil.Error:
+            logger.exception(ERROR_SAVING.format(filename=filename))
             return FileLoadResult(status=FileLoadStatus.ABORTED)
         return FileLoadResult(status=FileLoadStatus.FINISHED, path=result_path)
 
