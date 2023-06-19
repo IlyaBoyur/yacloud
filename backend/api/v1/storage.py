@@ -85,7 +85,6 @@ async def download(
     if records := await user_file_service.get_multi(
         db, filter=dict(path=path, user_id=user.id)
     ):
-        print(f"records: {records}")
         name = records[0].name
         path = records[0].path
         return FileResponse(
