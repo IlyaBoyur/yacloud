@@ -27,7 +27,7 @@ class UserFileCreate(BaseModel):
     name: str
     path: str
     size: int
-    is_downloadable: bool | None = False
+    is_downloadable: bool = False
 
 
 class UserFileUpdate(schemas.BaseUserUpdate):
