@@ -40,7 +40,7 @@ jobs:
       - name: Test with isort
         run: docker compose run --no-deps --rm backend /bin/sh -c "isort --sp pyproject.toml --check-only ."
       - name: Test with mypy
-        run: docker compose run --no-deps --rm backend /bin/sh -c "mypy --config-file setup.cfg ."
+        run: docker compose run --no-deps --rm backend /bin/sh -c "mypy --config-file setup.cfg --explicit-package-bases ."
       - name: Test with flake8
         run: docker compose run --no-deps --rm backend /bin/sh -c "flake8 --statistics --config setup.cfg ."
       - name: Run tests
