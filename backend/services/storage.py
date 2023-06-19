@@ -49,12 +49,8 @@ class LocalFileStorage(FileStorage):
 
     @staticmethod
     def create_path(path_dir: str, filename: str, extension: str) -> str:
-        root = app_settings.media_root
-        if not os.path.isdir(root):
-            os.mkdir(root)
-        folder = os.path.join(root, path_dir)
-        if not os.path.isdir(folder):
-            os.mkdir(folder)
+        folder = os.path.join(app_settings.media_root, path_dir)
+        os.makedirs(folder, mode=app_settings.storage_mode, exist_ok=True)
         return os.path.join(folder, filename + extension)
 
     @staticmethod
