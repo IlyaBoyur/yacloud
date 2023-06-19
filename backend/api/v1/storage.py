@@ -48,7 +48,7 @@ async def upload(
     result = await storage_service.upload(path=path, file=file)
     if result.status != FileLoadStatus.FINISHED:
         raise HTTPException(
-            status_code=400,
+            status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"During {file.filename} upload error occurred.",
         )
     object_in = UserFileCreate(
@@ -91,4 +91,6 @@ async def download(
         return FileResponse(
             path=path, media_type="application/octet-stream", filename=name
         )
-    raise HTTPException(status_code=400, detail="File not found.")
+    raise HTTPException(
+        status_code=status.HTTP_400_BAD_REQUEST, detail="File not found."
+    )
