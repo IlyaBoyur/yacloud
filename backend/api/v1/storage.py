@@ -3,7 +3,7 @@ from typing import Any
 from fastapi import APIRouter, Body, Depends, UploadFile, status
 from fastapi.exceptions import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from starlette.responses import FileResponse
+from starlette.responses import StreamingResponse
 
 from db import get_session
 from models import User
@@ -14,6 +14,7 @@ from services import (
     storage_service,
     user_file_service,
 )
+from utils import set_content_disposition
 
 router = APIRouter()
 
@@ -25,7 +26,7 @@ async def files(
     limit: int = 100,
     user: User = Depends(current_user),
 ) -> UserFileList:
-    """Retrieve list of file infos"""
+    """Retrieve list of file infos."""
 
     response = await user_file_service.get_multi(
         db, filter=dict(user_id=user.id), skip=skip, limit=limit
@@ -43,12 +44,14 @@ async def upload(
     file: UploadFile,
     path: str = Body(),
 ) -> UserFileRead:
-    """Upload file to user`s storage"""
+    """Upload file to user`s storage."""
 
-    result = await storage_service.upload(path=path, file=file)
+    result = await storage_service.upload(
+        path=path, file=file.file, name=file.filename
+    )
     if result.status != FileLoadStatus.FINISHED:
         raise HTTPException(
-            status_code=400,
+            status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"During {file.filename} upload error occurred.",
         )
     object_in = UserFileCreate(
@@ -73,22 +76,18 @@ async def download(
     user: User = Depends(current_user),
     path: str = "",
 ) -> Any:
-    """Download file"""
-    if (
-        record := await user_file_service.get(db, id=path)
-    ) is not None and record.user_id == user.id:
-        name = record.name
-        path = record.path
-        return FileResponse(
-            path=path, media_type="application/octet-stream", filename=name
+    """Download file."""
+
+    file = await user_file_service.get_by_path(db, path=path, user_id=user.id)
+    if file is not None:
+        stream = storage_service.get_download_stream(file.path)
+        headers = {}
+        set_content_disposition(headers, file.name)
+        return StreamingResponse(
+            content=stream,
+            media_type="application/octet-stream",
+            headers=headers,
         )
-    if records := await user_file_service.get_multi(
-        db, filter=dict(path=path, user_id=user.id)
-    ):
-        print(f"records: {records}")
-        name = records[0].name
-        path = records[0].path
-        return FileResponse(
-            path=path, media_type="application/octet-stream", filename=name
-        )
-    raise HTTPException(status_code=400, detail="File not found.")
+    raise HTTPException(
+        status_code=status.HTTP_400_BAD_REQUEST, detail="File not found."
+    )

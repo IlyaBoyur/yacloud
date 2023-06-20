@@ -18,6 +18,8 @@ class AppSettings(BaseSettings):
     jwt_lifetime_secs: int = 3600
     media_root: str = "media"
     storage_hash_filename: bool = False
+    storage_mode: int = 0o744
+    storage_chunk_size: int = 65535
 
     class Config:
         env_file = ".env"
