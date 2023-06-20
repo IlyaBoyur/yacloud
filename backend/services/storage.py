@@ -36,6 +36,10 @@ class FileStorage(ABC):
     def download(self, *args, **kwargs):
         pass
 
+    @abstractmethod
+    def get_download_stream(self, *args, **kwargs):
+        pass
+
 
 class FileUploadError(RuntimeError):
     pass
