@@ -15,7 +15,7 @@ class RepositoryUserFile(RepositoryDB[UserFileModel, UserFileCreate, None]):
         ) is not None and record.user_id == user_id:
             return record
         if records := await self.get_multi(
-            db, filter=dict(path=path, user_id=user_id)
+            db, filter={"path": path, "user_id": user_id}
         ):
             return records[0]
 
