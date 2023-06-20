@@ -4,7 +4,9 @@ import shutil
 from abc import ABC, abstractmethod
 from enum import Enum
 from tempfile import SpooledTemporaryFile
+from typing import AsyncGenerator
 
+import aiofiles
 from pydantic import BaseModel
 
 from core.config import app_settings
@@ -79,17 +81,26 @@ class LocalFileStorage(FileStorage):
 
         result_path = self.create_path(path_dir, filename, extension)
         try:
-            with open(result_path, "wb") as new_file:
-                shutil.copyfileobj(file.file, new_file)
-        except shutil.Error:
+            async with aiofiles.open(result_path, mode="wb") as new_file:
+                more_body = True
+                while more_body:
+                    chunk = file.read(self.chunk_size)
+                    more_body = len(chunk) == self.chunk_size
+                    await new_file.write(chunk)
+        except OSError:
             logger.exception(ERROR_SAVING.format(filename=filename))
             return FileLoadResult(status=FileLoadStatus.ABORTED)
         return FileLoadResult(status=FileLoadStatus.FINISHED, path=result_path)
 
     async def download(self, path: str):
-        with open(path, mode="rb") as file:
-            for line in file:
-                yield line
+        raise NotImplementedError
 
+    async def get_download_stream(self, path: str) -> AsyncGenerator:
+        async with aiofiles.open(path, mode="rb") as file:
+            more_body = True
+            while more_body:
+                chunk = await file.read(self.chunk_size)
+                more_body = len(chunk) == self.chunk_size
+                yield chunk
 
 storage_service = LocalFileStorage()
