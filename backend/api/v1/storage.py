@@ -3,7 +3,7 @@ from typing import Any
 from fastapi import APIRouter, Body, Depends, UploadFile, status
 from fastapi.exceptions import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from starlette.responses import FileResponse
+from starlette.responses import StreamingResponse
 
 from db import get_session
 from models import User
@@ -14,6 +14,7 @@ from services import (
     storage_service,
     user_file_service,
 )
+from utils import set_content_disposition
 
 router = APIRouter()
 
@@ -75,21 +76,15 @@ async def download(
 ) -> Any:
     """Download file."""
 
-    if (
-        record := await user_file_service.get(db, id=path)
-    ) is not None and record.user_id == user.id:
-        name = record.name
-        path = record.path
-        return FileResponse(
-            path=path, media_type="application/octet-stream", filename=name
-        )
-    if records := await user_file_service.get_multi(
-        db, filter=dict(path=path, user_id=user.id)
-    ):
-        name = records[0].name
-        path = records[0].path
-        return FileResponse(
-            path=path, media_type="application/octet-stream", filename=name
+    file = await user_file_service.get_by_path(db, path=path, user_id=user.id)
+    if file is not None:
+        stream = storage_service.download(file.path)
+        headers = {}
+        set_content_disposition(headers, file.name)
+        return StreamingResponse(
+            content=stream,
+            media_type="application/octet-stream",
+            headers=headers,
         )
     raise HTTPException(
         status_code=status.HTTP_400_BAD_REQUEST, detail="File not found."
