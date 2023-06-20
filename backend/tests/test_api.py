@@ -46,6 +46,12 @@ class TestAPIs:
         assert response.status_code == status.HTTP_200_OK
         assert "db" in response.json()
 
+    async def test_files(
+        self, auth_client: AsyncClient, create_files: list[UserFileFactory]
+    ):
+        response = await auth_client.get(FILES_URL)
+        assert response.status_code == status.HTTP_200_OK
+
     async def test_files_anonymous(self, api_client: AsyncClient):
         response = await api_client.get(FILES_URL)
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
