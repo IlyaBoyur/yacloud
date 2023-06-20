@@ -1,4 +1,4 @@
-import os
+import json
 from typing import AsyncGenerator
 
 import pytest
@@ -72,7 +72,9 @@ async def session(
 
 
 @pytest.fixture
-async def api_client(session) -> AsyncGenerator[AsyncClient, None]:
+async def api_client(
+    session: AsyncSession,
+) -> AsyncGenerator[AsyncClient, None]:
     """
     Fixture for creating httpx.AsyncClient in tests
     Helps to call FastAPI application in tests
