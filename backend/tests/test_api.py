@@ -13,6 +13,25 @@ PING_URL = app.url_path_for("ping")
 FILES_URL = app.url_path_for("files")
 UPLOAD_URL = app.url_path_for("upload")
 DOWNLOAD_URL = app.url_path_for("download")
+LOGIN_URL = "/api/v1/login"
+REGISTER_URL = "/api/v1/register"
+TEST_USER = "testuser@test.com"
+TEST_PASSWORD = "password"
+
+
+@pytest.fixture
+async def auth_client(api_client: AsyncClient):
+    """Register new user and set JWT token for authorization"""
+    await api_client.post(
+        REGISTER_URL,
+        json={"email": TEST_USER, "password": TEST_PASSWORD},
+    )
+    response = await api_client.post(
+        LOGIN_URL, data={"username": TEST_USER, "password": TEST_PASSWORD}
+    )
+    headers = {"Authorization": f"Bearer {response.json()['access_token']}"}
+    api_client.headers = headers
+    return api_client
 
 
 class TestAPIs:
