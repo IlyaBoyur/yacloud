@@ -72,12 +72,17 @@ class LocalFileStorage(FileStorage):
 
         result_path = self.create_path(path_dir, filename, extension)
         try:
-            with open(result_path, "wb") as f:
-                shutil.copyfileobj(file.file, f)
+            with open(result_path, "wb") as new_file:
+                shutil.copyfileobj(file.file, new_file)
         except shutil.Error:
             logger.exception(ERROR_SAVING.format(filename=filename))
             return FileLoadResult(status=FileLoadStatus.ABORTED)
         return FileLoadResult(status=FileLoadStatus.FINISHED, path=result_path)
+
+    async def download(self, path: str):
+        with open(path, mode="rb") as file:
+            for line in file:
+                yield line
 
 
 storage_service = LocalFileStorage()
