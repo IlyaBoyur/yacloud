@@ -27,9 +27,8 @@ async def files(
     user: User = Depends(current_user),
 ) -> UserFileList:
     """Retrieve list of file infos."""
-
     response = await user_file_service.get_multi(
-        db, filter=dict(user_id=user.id), skip=skip, limit=limit
+        db, filter={"user_id": user.id, "skip": skip, "limit": limit}
     )
     return UserFileList(account_id=user.id, files=response)
 
@@ -45,7 +44,6 @@ async def upload(
     path: str = Body(),
 ) -> UserFileRead:
     """Upload file to user`s storage."""
-
     result = await storage_service.upload(
         path=path, file=file.file, name=file.filename
     )
@@ -77,7 +75,6 @@ async def download(
     path: str = "",
 ) -> Any:
     """Download file."""
-
     file = await user_file_service.get_by_path(db, path=path, user_id=user.id)
     if file is not None:
         stream = storage_service.get_download_stream(file.path)
