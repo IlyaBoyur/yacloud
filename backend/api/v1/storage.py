@@ -46,7 +46,9 @@ async def upload(
 ) -> UserFileRead:
     """Upload file to user`s storage."""
 
-    result = await storage_service.upload(path=path, file=file)
+    result = await storage_service.upload(
+        path=path, file=file.file, name=file.filename
+    )
     if result.status != FileLoadStatus.FINISHED:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
