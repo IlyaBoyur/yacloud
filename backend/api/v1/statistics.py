@@ -2,12 +2,11 @@ import logging
 import time
 
 from fastapi import APIRouter, Depends
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.sql import functions
 
 from db import get_session
 from schemas.status import Status, StatusError
+from services import statistics_service
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -22,7 +21,7 @@ async def ping(
     """Get service status"""
     try:
         start = time.perf_counter()
-        await db.execute(statement=select(functions.now()))
+        await statistics_service.get_current_time(db)
         elapsed = time.perf_counter() - start
         return Status(db=elapsed)
     except ConnectionError as error:
