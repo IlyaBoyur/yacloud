@@ -80,7 +80,7 @@ async def download(
 
     file = await user_file_service.get_by_path(db, path=path, user_id=user.id)
     if file is not None:
-        stream = storage_service.download(file.path)
+        stream = storage_service.get_download_stream(file.path)
         headers = {}
         set_content_disposition(headers, file.name)
         return StreamingResponse(
