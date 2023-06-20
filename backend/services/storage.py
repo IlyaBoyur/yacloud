@@ -94,7 +94,9 @@ class LocalFileStorage(FileStorage):
     async def download(self, path: str):
         raise NotImplementedError
 
-    async def get_download_stream(self, path: str) -> AsyncGenerator:
+    async def get_download_stream(
+        self, path: str
+    ) -> AsyncGenerator[bytes, None]:
         async with aiofiles.open(path, mode="rb") as file:
             more_body = True
             while more_body:
