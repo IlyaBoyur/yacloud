@@ -46,6 +46,9 @@ class FileUploadError(RuntimeError):
 
 
 class LocalFileStorage(FileStorage):
+    def __init__(self, chunk_size: int = 65535):
+        self.chunk_size = chunk_size
+
     @staticmethod
     def parse_path(path: str) -> tuple[str, str, str]:
         path_dir, file = os.path.split(path)
