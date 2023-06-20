@@ -1,6 +1,7 @@
 import logging
 import os
 import shutil
+from abc import ABC, abstractmethod
 from enum import Enum
 from tempfile import SpooledTemporaryFile
 
@@ -26,12 +27,14 @@ class FileLoadResult(BaseModel):
     file: bytes | None = None
 
 
-class FileStorage:
+class FileStorage(ABC):
+    @abstractmethod
     def upload(self, *args, **kwargs):
-        raise NotImplementedError
+        pass
 
+    @abstractmethod
     def download(self, *args, **kwargs):
-        raise NotImplementedError
+        pass
 
 
 class FileUploadError(RuntimeError):
