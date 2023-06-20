@@ -1,6 +1,5 @@
 import logging
 import os
-import shutil
 from abc import ABC, abstractmethod
 from enum import Enum
 from tempfile import SpooledTemporaryFile
@@ -102,5 +101,6 @@ class LocalFileStorage(FileStorage):
                 chunk = await file.read(self.chunk_size)
                 more_body = len(chunk) == self.chunk_size
                 yield chunk
+
 
 storage_service = LocalFileStorage()
