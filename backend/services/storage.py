@@ -68,11 +68,11 @@ class LocalFileStorage(FileStorage):
         return name
 
     async def upload(
-        self, path: str, file: SpooledTemporaryFile
+        self, path: str, file: SpooledTemporaryFile, name: str
     ) -> FileLoadResult:
         path_dir, filename, extension = self.parse_path(path)
         if not filename or not extension:
-            filename, extension = os.path.splitext(file.filename)
+            filename, extension = os.path.splitext(name)
 
         if app_settings.storage_hash_filename:
             filename = self.hash_filename(filename)
