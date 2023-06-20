@@ -28,7 +28,7 @@ async def files(
 ) -> UserFileList:
     """Retrieve list of file infos."""
     response = await user_file_service.get_multi(
-        db, filter={"user_id": user.id, "skip": skip, "limit": limit}
+        db, filter={"user_id": user.id}, skip=skip, limit=limit
     )
     return UserFileList(account_id=user.id, files=response)
 
@@ -64,8 +64,7 @@ async def upload(
     count = await user_file_service.count(db, filter=filter)
     if count > 0:
         await user_file_service.delete(db=db, filter=filter)
-    new_file = await user_file_service.create(db, object_in=object_in)
-    return new_file
+    return await user_file_service.create(db, object_in=object_in)
 
 
 @router.get("/download", status_code=status.HTTP_200_OK)
