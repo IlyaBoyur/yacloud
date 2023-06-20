@@ -1,4 +1,5 @@
 import logging
+from abc import ABC, abstractmethod
 from typing import Any, Generic, Type, TypeVar
 
 from pydantic import BaseModel
@@ -12,19 +13,24 @@ from db import Base
 logger = logging.getLogger(__name__)
 
 
-class Repository:
+class Repository(ABC):
+    @abstractmethod
     def get(self, *args, **kwargs):
         raise NotImplementedError
 
+    @abstractmethod
     def get_multi(self, *args, **kwargs):
         raise NotImplementedError
 
+    @abstractmethod
     def create(self, *args, **kwargs):
         raise NotImplementedError
 
+    @abstractmethod
     def update(self, *args, **kwargs):
         raise NotImplementedError
 
+    @abstractmethod
     def delete(self, *args, **kwargs):
         raise NotImplementedError
 
