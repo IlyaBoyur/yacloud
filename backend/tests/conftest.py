@@ -19,6 +19,15 @@ from main import app
 from .db_utils import create_db
 
 
+def pytest_addoption(parser: pytest.Parser) -> None:
+    parser.addoption(
+        "--dburl",
+        action="store",
+        default=f"{app_settings.project_db}_test",
+        help="url of the database to use for tests",
+    )
+
+
 @pytest.fixture(scope="session")
 def anyio_backend() -> str:
     """Overrides default anyio backend to drop `trio` dependency"""
@@ -26,9 +35,14 @@ def anyio_backend() -> str:
 
 
 @pytest.fixture(scope="session")
-async def engine() -> AsyncGenerator[AsyncEngine, None]:
+def db_url(request: pytest.FixtureRequest) -> str:
+    return request.config.getoption("--dburl")
+
+
+@pytest.fixture(scope="session")
+async def engine(db_url: str) -> AsyncGenerator[AsyncEngine, None]:
     """Create async engine for tests"""
-    engine = create_async_engine(f"{app_settings.project_db}_test", echo=True)
+    engine = create_async_engine(db_url, echo=True)
     try:
         yield engine
     finally:
