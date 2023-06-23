@@ -5,7 +5,7 @@ def set_content_disposition(
     headers: dict,
     filename: str,
     content_disposition_type: str = "attachment",
-):
+) -> None:
     if not filename:
         return
     content_disposition_filename = quote(filename)
