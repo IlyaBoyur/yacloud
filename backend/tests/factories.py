@@ -1,6 +1,4 @@
 import factory
-
-from db import async_session, get_session
 from models import User, UserFile
 
 
@@ -14,7 +12,7 @@ class AsyncModelFactory(factory.alchemy.SQLAlchemyModelFactory):
 
         async def create_coro(*args, **kwargs):
             db_object = model_class(*args, **kwargs)
-            async with session() as s:
+            async with session as s:
                 s.add(db_object)
                 await s.commit()
                 await s.refresh(db_object)
@@ -39,7 +37,6 @@ class UserFactory(AsyncModelFactory):
 
     class Meta:
         model = User
-        sqlalchemy_session = async_session
 
 
 class UserFileFactory(AsyncModelFactory):
@@ -52,4 +49,3 @@ class UserFileFactory(AsyncModelFactory):
 
     class Meta:
         model = UserFile
-        sqlalchemy_session = async_session
