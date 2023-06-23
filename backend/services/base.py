@@ -16,23 +16,23 @@ logger = logging.getLogger(__name__)
 class Repository(ABC):
     @abstractmethod
     def get(self, *args, **kwargs):
-        raise NotImplementedError
+        pass
 
     @abstractmethod
     def get_multi(self, *args, **kwargs):
-        raise NotImplementedError
+        pass
 
     @abstractmethod
     def create(self, *args, **kwargs):
-        raise NotImplementedError
+        pass
 
     @abstractmethod
     def update(self, *args, **kwargs):
-        raise NotImplementedError
+        pass
 
     @abstractmethod
     def delete(self, *args, **kwargs):
-        raise NotImplementedError
+        pass
 
 
 ModelType = TypeVar("ModelType", bound=Base)
