@@ -42,10 +42,10 @@ async def auth_client(api_client: AsyncClient, auth_user: dict):
 
 class TestAPIs:
     @pytest.fixture
-    async def create_files(self):
-        users = [await UserFactory() for _ in range(3)]
-        files = [await UserFileFactory(user_id=user.id) for user in users]
-        return files
+    async def create_files(self, auth_user: dict, session: AsyncSession):
+        id = auth_user["id"]
+        UserFileFactory._meta.sqlalchemy_session = session
+        return await UserFileFactory.create_batch(3, user_id=id)
 
     async def test_ping(self, api_client: AsyncClient):
         response = await api_client.get(PING_URL)
@@ -53,10 +53,16 @@ class TestAPIs:
         assert "db" in response.json()
 
     async def test_files(
-        self, auth_client: AsyncClient, create_files: list[UserFileFactory]
+        self,
+        auth_user: dict,
+        auth_client: AsyncClient,
+        create_files: list[UserFileFactory],
     ):
         response = await auth_client.get(FILES_URL)
+        response_json = response.json()
         assert response.status_code == status.HTTP_200_OK
+        assert response_json["account_id"] == auth_user["id"]
+        assert len(response_json["files"]) == len(create_files)
 
     async def test_files_anonymous(self, api_client: AsyncClient):
         response = await api_client.get(FILES_URL)
