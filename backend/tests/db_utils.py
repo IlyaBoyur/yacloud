@@ -4,7 +4,7 @@ from functools import cached_property
 from sqlalchemy import text
 from sqlalchemy.engine import URL, make_url
 from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
-from sqlalchemy.orm import DeclarativeMeta
+from sqlalchemy.orm import DeclarativeBase
 
 
 @dataclass
@@ -31,7 +31,7 @@ class DBUtils:
         async with self.postgres_engine.connect() as conn:
             await conn.execute(query)
 
-    async def create_tables(self, base: DeclarativeMeta) -> None:
+    async def create_tables(self, base: DeclarativeBase) -> None:
         async with self.db_engine.begin() as conn:
             await conn.run_sync(base.metadata.create_all)
 
@@ -54,7 +54,7 @@ class DBUtils:
         return make_url(self.url)
 
 
-async def create_db(url: str, base: DeclarativeMeta) -> None:
+async def create_db(url: str, base: DeclarativeBase) -> None:
     db_utils = DBUtils(url=url)
 
     try:
