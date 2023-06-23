@@ -1,6 +1,7 @@
 import pytest
 from fastapi import status
 from httpx import AsyncClient
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from main import app
 
@@ -20,15 +21,20 @@ TEST_PASSWORD = "password"
 
 
 @pytest.fixture
-async def auth_client(api_client: AsyncClient):
+async def auth_user(api_client: AsyncClient) -> dict:
+    data = {"email": TEST_USER, "password": TEST_PASSWORD}
+    response = await api_client.post(REGISTER_URL, json=data)
+    return {**data, **response.json()}
+
+
+@pytest.fixture
+async def auth_client(api_client: AsyncClient, auth_user: dict):
     """Register new user and set JWT token for authorization"""
-    await api_client.post(
-        REGISTER_URL,
-        json={"email": TEST_USER, "password": TEST_PASSWORD},
-    )
-    response = await api_client.post(
-        LOGIN_URL, data={"username": TEST_USER, "password": TEST_PASSWORD}
-    )
+    query_data = {
+        "username": auth_user["email"],
+        "password": auth_user["password"],
+    }
+    response = await api_client.post(LOGIN_URL, data=query_data)
     headers = {"Authorization": f"Bearer {response.json()['access_token']}"}
     api_client.headers = headers
     return api_client
