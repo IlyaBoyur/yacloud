@@ -22,6 +22,11 @@ class AsyncModelFactory(factory.alchemy.SQLAlchemyModelFactory):
 
         return create_coro(*args, **kwargs)
 
+    @classmethod
+    async def create_batch(cls, size, **kwargs):
+        model_coros = super().create_batch(size, **kwargs)
+        return [await model for model in model_coros]
+
 
 class UserFactory(AsyncModelFactory):
     id = factory.Faker("uuid4")
