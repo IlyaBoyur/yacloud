@@ -45,9 +45,9 @@ class UserFactory(AsyncModelFactory):
 class UserFileFactory(AsyncModelFactory):
     id = factory.Faker("uuid4")
     user_id = factory.SubFactory(UserFactory)
-    name = factory.Faker("name")
+    name = factory.LazyAttribute(lambda obj: obj.path.split("/")[-1])
     created_at = factory.Faker("date_time")
-    path = factory.Faker("name")
+    path = factory.Faker("file_path", depth=3, absolute=False)
     size = factory.Faker("random_int", min=1)
 
     class Meta:
