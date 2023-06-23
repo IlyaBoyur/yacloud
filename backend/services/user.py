@@ -36,7 +36,7 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
     async def on_after_register(
         self, user: User, request: Request | None = None
     ):
-        logger.info(f"User %s has signed up.".format(user.id))
+        logger.info("User %s has signed up.", user.id)
 
     async def on_after_login(
         self,
@@ -44,7 +44,7 @@ class UserManager(UUIDIDMixin, BaseUserManager[User, uuid.UUID]):
         request: Request | None = None,
         response: Request | None = None,
     ) -> None:
-        logger.info(f"User %s has logged in.".format(user.id))
+        logger.info("User %s has logged in.", user.id)
 
     async def validate_password(
         self, password: str, user: schemas.UC | models.UP
