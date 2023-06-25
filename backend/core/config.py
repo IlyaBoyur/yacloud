@@ -1,6 +1,6 @@
 from logging import config as logging_config
 
-from pydantic import BaseSettings, HttpUrl, PostgresDsn
+from pydantic import BaseSettings, HttpUrl, PostgresDsn, RedisDsn
 
 from core.logger import LOGGING
 
@@ -18,8 +18,9 @@ class AppSettings(BaseSettings):
     jwt_lifetime_secs: int = 3600
     media_root: str = "media"
     storage_hash_filename: bool = False
-    storage_mode: int = 0o744
+    storage_mode: int = 0o777
     storage_chunk_size: int = 65535
+    cache_url: RedisDsn = "redis://localhost:6379/0"
 
     class Config:
         env_file = ".env"
