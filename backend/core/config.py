@@ -21,6 +21,7 @@ class AppSettings(BaseSettings):
     storage_mode: int = 0o777
     storage_chunk_size: int = 65535
     cache_url: RedisDsn = "redis://localhost:6379/0"
+    cache_expire_secs: int = 60
 
     class Config:
         env_file = ".env"
