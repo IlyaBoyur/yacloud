@@ -1,3 +1,5 @@
+import time
+from typing import Awaitable
 from urllib.parse import quote
 
 
@@ -18,3 +20,10 @@ def set_content_disposition(
             content_disposition_type, filename
         )
     headers.setdefault("content-disposition", content_disposition)
+
+
+async def elapse(async_func: Awaitable) -> float:
+    start = time.perf_counter()
+    await async_func
+    elapsed = time.perf_counter() - start
+    return elapsed
