@@ -25,6 +25,7 @@ services:
       - STORAGE_HASH_FILENAME
       - STORAGE_CHUNK_SIZE
       - CACHE_URL
+      - CACHE_EXPIRE_SECS
     depends_on:
       - db
 

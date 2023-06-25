@@ -60,5 +60,8 @@ class RedisCache(Cache):
 
 
 async def get_cache() -> Cache:
-    with RedisCache(url=app_settings.cache_url) as cache:
+    with RedisCache(
+        url=app_settings.cache_url,
+        expire_secs=app_settings.cache_expire_secs,
+    ) as cache:
         yield cache
