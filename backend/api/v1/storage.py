@@ -9,8 +9,10 @@ from db import get_session
 from models import User
 from schemas import UserFileCreate, UserFileList, UserFileRead
 from services import (
+    Cache,
     FileLoadStatus,
     current_user,
+    get_cache,
     storage_service,
     user_file_service,
 )
@@ -72,13 +74,21 @@ async def download(
     db: AsyncSession = Depends(get_session),
     user: User = Depends(current_user),
     path: str = "",
+    cache: Cache = Depends(get_cache),
 ) -> Any:
     """Download file."""
-    file = await user_file_service.get_by_path(db, path=path, user_id=user.id)
+    file = await user_file_service.get_from_cache(cache, key=path)
+    if file is None:
+        file = await user_file_service.get_by_path(
+            db, path=path, user_id=user.id
+        )
     if file is None:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="File not found."
         )
+    await user_file_service.set_in_cache(
+        cache, str(file.id), UserFileRead.from_orm(file)
+    )
     stream = storage_service.get_download_stream(file.path)
     headers = {}
     set_content_disposition(headers, file.name)
