@@ -23,6 +23,8 @@ services:
       - JWT_LIFETIME_SECS
       - MEDIA_ROOT
       - STORAGE_HASH_FILENAME
+      - STORAGE_CHUNK_SIZE
+      - CACHE_URL
     depends_on:
       - db
 
@@ -40,5 +42,12 @@ services:
       - POSTGRES_PORT
       - POSTGRES_DB
 
+  redis:
+    restart: always
+    image: redis:7.0-alpine
+    volumes:
+      - redisdata:/data
+
 volumes:
   postgresdata:
+  redisdata:
