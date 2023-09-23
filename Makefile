@@ -11,7 +11,7 @@ down:
 	docker compose down
 
 test:
-	docker compose exec -it backend /bin/sh -c "pytest . --reuse-db"
+	docker compose exec -it backend /bin/sh -c "pytest ."
 
 exec_backend:
 	docker compose exec -it backend bash
