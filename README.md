@@ -155,7 +155,7 @@ Python 3.11, FastAPI, PostgreSQL, SQLAlchemy, asyncpg, uvicorn, Docker, JWT, git
 
 
 <details>
-<summary> Список дополнительных (опциональных) эндпойнтов. </summary>
+<summary> Список эндпойнтов - планы по расширению приложения. </summary>
 
 
 1. Добавление возможности скачивания в архиве.
@@ -334,3 +334,7 @@ make down         # Удалить контейнеры
 make test         # Запустить тесты
 make exec_backend # Получить доступ в контейнер бэкенда
 ```
+
+## Авторы
+
+[Илья Боюр](https://github.com/IlyaBoyur)
