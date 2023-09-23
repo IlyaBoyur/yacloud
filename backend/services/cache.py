@@ -34,7 +34,7 @@ class RedisCache(Cache):
         self.connection = Redis.from_url(url=self.url, decode_responses=True)
         return self
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
+    def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         """Make sure the db connection gets closed."""
         self.connection.close()
         self.connection = None
