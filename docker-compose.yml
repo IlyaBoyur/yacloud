@@ -36,7 +36,7 @@ services:
     ports:
       - 55432:${POSTGRES_PORT}
     volumes:
-       - postgresdata:/var/lib/postgresql/data
+       - ./${POSTGRES_DATA:-postgres-data}:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER
       - POSTGRES_PASSWORD
@@ -47,8 +47,4 @@ services:
     restart: always
     image: redis:7.0-alpine
     volumes:
-      - redisdata:/data
-
-volumes:
-  postgresdata:
-  redisdata:
+      - ./${REDIS_DATA:-redis-data}:/data
