@@ -83,3 +83,8 @@ coverage.xml
 .idea
 .vscode
 media/
+
+
+### Data
+redis-data/
+postgres-data/
