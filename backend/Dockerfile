@@ -13,8 +13,8 @@ RUN apt-get update -y --no-install-recommends; \
     apt-get install -y --no-install-recommends \
     curl `# для установки poetry` \
     git `# для установки зависимостей из git` \
-    gcc `# для cryptography`
-RUN pip install --user poetry==1.6 && pip install certifi==2021.10.8
+    gcc `# для cryptography`; \
+    pip install --user poetry==1.6 && pip install certifi==2021.10.8
 
 # Set working directory for the application
 WORKDIR /app/
