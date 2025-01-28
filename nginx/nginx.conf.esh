@@ -19,6 +19,7 @@ map $server_port $x_forwarded_host {
 <% fi; -%>
 
 server {
+    server_tokens off;
     server_name <%= $SITE_HOST %>;
 
     <% if [ "$TLS_MODE" != "off" ]; then -%>
