@@ -311,10 +311,10 @@ Python 3.11, FastAPI, PostgreSQL, SQLAlchemy, asyncpg, uvicorn, Docker, JWT, git
 
 2. Создайте файл переменных среды 
 
-Создайте в текущей папке файл .env со значениями переменных среды.
-
-(см пример файла .env.example в корне проекта)
-
+```shell
+# В корне проекта
+cp .env.example .env
+```
 
 3. Соберите и запустите контейнеры Docker
 ```shell
